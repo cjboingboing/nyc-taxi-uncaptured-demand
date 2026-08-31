@@ -13,7 +13,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-PySpark requires a local JVM (Java 11+). TLC trip records are not commited (see `.gitignore`). Run the downloads scripts below first:
+PySpark requires a local JVM (Java 11+). TLC trip records are not committed (see `.gitignore`). Run the downloads scripts below first:
 
 
 ## Repo Structure
@@ -73,4 +73,14 @@ python3 scripts/process_weather.py
 python3 scripts/generate_design_matrix.py
 ```
 
+### Notebooks
+
+Once the above has run, the four notebooks are independent of each other and can be run in any order:
+
+- `general_stats.ipynb` -- outlier analysis (boxplots, adopted bounds)
+- `market_share_maps.ipynb` -- zone-level choropleths (taxi/rideshare share, demand)
+- `timeseries_and_summaries.ipynb` -- holidays, weather effects, typical-week profile, long-run 2009-2025 context
+- `demand_model.ipynb` -- the Poisson/NB demand model, GBM benchmark, Uncaptured Demand results
+
+`demand_model.ipynb` caches each slow model fit to `models/*.pkl`/`.joblib` on first run and just reloads them after -- delete the relevant file (or the whole folder) to force a refit, e.g. if you've regenerated the design matrix.
 
