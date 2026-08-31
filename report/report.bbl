@@ -1,0 +1,176 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{tlc_trip_data}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=bbb1941afa7ef50736ee949c9dde3712}{%
+           family={{NYC Taxi and Limousine Commission}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{fullhash}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{fullhashraw}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{bibnamehash}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{authorbibnamehash}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{authornamehash}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{authorfullhash}{bbb1941afa7ef50736ee949c9dde3712}
+      \strng{authorfullhashraw}{bbb1941afa7ef50736ee949c9dde3712}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Yellow, green, and High Volume For-Hire Vehicle (HVFHV) trip records, including the taxi zone lookup and shapefile}
+      \field{title}{TLC Trip Record Data}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+      \endverb
+      \verb{url}
+      \verb https://www1.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+      \endverb
+    \endentry
+    \entry{ncei_lcd}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=0a1baf366546e8efbbcbebabc88bad57}{%
+           family={{National Centers for Environmental Information (NCEI)}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{fullhash}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{fullhashraw}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{bibnamehash}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{authorbibnamehash}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{authornamehash}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{authorfullhash}{0a1baf366546e8efbbcbebabc88bad57}
+      \strng{authorfullhashraw}{0a1baf366546e8efbbcbebabc88bad57}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Hourly weather observations, LaGuardia Airport station USW00014732}
+      \field{title}{Local Climatological Data (LCD), Access Data Service}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://www.ncei.noaa.gov/access/services/data/v1
+      \endverb
+      \verb{url}
+      \verb https://www.ncei.noaa.gov/access/services/data/v1
+      \endverb
+    \endentry
+    \entry{nyc_permitted_events}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=970483774809a36af77eb5c99fbf447a}{%
+           family={{NYC Open Data}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{970483774809a36af77eb5c99fbf447a}
+      \strng{fullhash}{970483774809a36af77eb5c99fbf447a}
+      \strng{fullhashraw}{970483774809a36af77eb5c99fbf447a}
+      \strng{bibnamehash}{970483774809a36af77eb5c99fbf447a}
+      \strng{authorbibnamehash}{970483774809a36af77eb5c99fbf447a}
+      \strng{authornamehash}{970483774809a36af77eb5c99fbf447a}
+      \strng{authorfullhash}{970483774809a36af77eb5c99fbf447a}
+      \strng{authorfullhashraw}{970483774809a36af77eb5c99fbf447a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Street Activity Permit Office event records, Socrata dataset bkfu-528j}
+      \field{title}{NYC Permitted Event Information -- Historical}
+      \field{year}{2025}
+      \verb{urlraw}
+      \verb https://data.cityofnewyork.us/City-Government/NYC-Permitted-Event-Information-Historical/bkfu-528j
+      \endverb
+      \verb{url}
+      \verb https://data.cityofnewyork.us/City-Government/NYC-Permitted-Event-Information-Historical/bkfu-528j
+      \endverb
+    \endentry
+    \entry{cameron_trivedi_count}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=dab37900e0b3d1bbd6b945d99fef4b06}{%
+           family={Cameron},
+           familyi={C\bibinitperiod},
+           given={A.\bibnamedelimi Colin},
+           giveni={A\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+        {{hash=1828613c534b16d7b5a650c96a8c2595}{%
+           family={Trivedi},
+           familyi={T\bibinitperiod},
+           given={Pravin\bibnamedelima K.},
+           giveni={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cambridge}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{c9ed462534b8f45616884f53043295aa}
+      \strng{fullhash}{c9ed462534b8f45616884f53043295aa}
+      \strng{fullhashraw}{c9ed462534b8f45616884f53043295aa}
+      \strng{bibnamehash}{c9ed462534b8f45616884f53043295aa}
+      \strng{authorbibnamehash}{c9ed462534b8f45616884f53043295aa}
+      \strng{authornamehash}{c9ed462534b8f45616884f53043295aa}
+      \strng{authorfullhash}{c9ed462534b8f45616884f53043295aa}
+      \strng{authorfullhashraw}{c9ed462534b8f45616884f53043295aa}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2nd}
+      \field{series}{Econometric Society Monographs}
+      \field{title}{Regression Analysis of Count Data}
+      \field{year}{2013}
+    \endentry
+    \entry{ross_probability_models}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=bf5f2440b50cd085a0515d2dd4c3cf92}{%
+           family={Ross},
+           familyi={R\bibinitperiod},
+           given={Sheldon\bibnamedelima M.},
+           giveni={S\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Amsterdam}%
+      }
+      \list{publisher}{1}{%
+        {Academic Press}%
+      }
+      \strng{namehash}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{fullhash}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{fullhashraw}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{bibnamehash}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{authorbibnamehash}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{authornamehash}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{authorfullhash}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \strng{authorfullhashraw}{bf5f2440b50cd085a0515d2dd4c3cf92}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{10th}
+      \field{isbn}{978-0-12-375686-2}
+      \field{title}{Introduction to Probability Models}
+      \field{year}{2010}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

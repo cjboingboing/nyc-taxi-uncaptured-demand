@@ -1,0 +1,21 @@
+# raw + derived data -- re-downloadable via scripts/downloads.py, too large for git
+/data/
+
+__pycache__/
+*.pyc
+
+.ipynb_checkpoints/
+
+# LaTeX build artifacts -- report.pdf itself is committed, these aren't
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.out
+*.synctex.gz
+*.bcf
+*.bcf-SAVE-ERROR
+*.blg
+*.run.xml
+
+.DS_Store
