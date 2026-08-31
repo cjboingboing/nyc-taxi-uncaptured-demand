@@ -87,6 +87,10 @@ the ride-hailing market is so stark. These datasets include:
     to a planned event. The presence of a major event intrinsically affects the number of ride-hailing trips,
     as a large volume of people travel to the same place at a particular time; events can also
     hinder people's ability to travel due to road closures.
+
+    \item \textbf{TLC Monthly Data Report}~\cite{tlc_monthly_report} -- a separate published aggregate (trips-per-day by
+    license class, 2009 onward), not the raw trip-record dataset above; used only for the 17-year market-shift context
+    in Figure~\ref{fig:longrun}, since pulling raw per-trip records back to 2009 was not necessary for that purpose.
 \end{enumerate}
 
 % You can have \section{}, \subsection{}, and \subsubsection{}, \section*{}, \subsection*{}, and \subsubsection*{}
@@ -166,7 +170,7 @@ MATRIX    + trip aggregates       (2303880, 16)
 \subsection{Engineered Features}
 
 \begin{itemize}
-    \item[$\star$] TLC reports no taxi ID, so \texttt{effective\_taxis} -- a Little's-Law fleet-occupancy estimate, developed in Section~\ref{sec:results} -- would be circular as a model \emph{feature}: it is computed from the same cell's own trip count, the quantity being predicted.
+    \item[$\star$] Event proximity is engineered from the raw permit data (Section~\ref{sec:preprocessing}) into a per-zone-hour binary flag, \texttt{is\_event}: does this (zone, hour) overlap a major permitted event in its borough. Coarse as it is, it is a statistically significant demand driver (IRR $1.010$, $p=0.008$) once persistence and weather are controlled for.
     \item[$\star$] Daily/weekly/yearly harmonic features let the model capture seasonality more naturally than hour-of-day dummies (construction and
           justification in Section~\ref{sec:harmonics}).
 \end{itemize}
@@ -189,7 +193,6 @@ A separate outlier analysis (\texttt{notebooks/general\_stats.ipynb}) examined t
 
 \subsection{Long-Run Context: 2009--2025}
 
-\needspace{6\baselineskip}
 \begin{wrapfigure}{l}{0.6\textwidth}
     \centering
     \includegraphics[width=0.98\linewidth]{../plots/longrun_trips_timeseries_2009_2025.png}
@@ -201,10 +204,9 @@ Figure~\ref{fig:longrun} shows the long-run ride-hailing market shift. With a sl
 yellow and green taxi volumes begin to plummet. COVID-19 causes a uniform drop, and yellow cabs appear barely able to recover, while
 rideshare sees a steady, unambiguous return to pre-COVID levels.
 
-\needspace{9\baselineskip}
 \subsection{Holidays and Seasonality}
 
-\begin{table}[H]
+\begin{table}[tbp]
 \centering
 \footnotesize
 \begin{tabular}{lrr}
@@ -314,11 +316,11 @@ Let $Y_{z,t}$ denote total (taxi $+$ rideshare) trip volume in taxi zone $z$ dur
 
 \subsection{Model Specification}
 
-Observed taxi volume is supply-censored ($Y^{taxi} = \min(\text{demand}, \text{available taxis})$), so total volume is the modelling target -- a cleaner proxy for addressable market. Counts are non-negative and heteroskedastic, so a Poisson GLM with a log link replaces OLS as the starting point, refit Negative Binomial once overdispersion is confirmed (Section~4.5) -- the specification used throughout:
+Observed taxi volume is supply-censored ($Y^{taxi} = \min(\text{demand}, \text{available taxis})$), so total volume is the modelling target -- a cleaner proxy for addressable market. Counts are non-negative and heteroskedastic, so a GLM with a log link replaces OLS as the starting point; an initial Poisson fit was rejected in favour of \textbf{Negative Binomial (NB)} once overdispersion was confirmed ($\text{Var}(Y) \gg \mathbb{E}[Y]$), so NB, $\text{Var}(Y) = \lambda + \alpha\lambda^2$ ($\alpha$ via Cameron--Trivedi regression~\cite{cameron_trivedi_count}; nests Poisson at $\alpha=0$), is the specification used throughout:
 \begin{equation}
-    \log \lambda_{z,t} = \mathbf{x}_{z,t}^\top \boldsymbol\beta, \qquad Y_{z,t} \sim \text{Poisson}(\lambda_{z,t}),
+    \log \lambda_{z,t} = \mathbf{x}_{z,t}^\top \boldsymbol\beta, \qquad Y_{z,t} \sim \text{NB}(\lambda_{z,t}, \alpha),
 \end{equation}
-guaranteeing $\lambda > 0$ and a multiplicative rate effect per covariate ($e^{\beta_j}$, an incidence rate ratio).
+guaranteeing $\lambda > 0$ and a multiplicative rate effect per covariate ($e^{\beta_j}$, an incidence rate ratio). Zone-hours also share unmodelled local conditions over time (an unflagged event, a driver shortage), so inference uses zone-clustered sandwich SEs.
 
 \subsection{Harmonic (Fourier) Seasonality}
 \label{sec:harmonics}
@@ -337,10 +339,6 @@ Stacking weather into $\mathbf{w}_{z,t}$ and lags into $\boldsymbol\ell_{z,t}$:
     \log \lambda_{z,t} = \beta_0 + \gamma_z + H(t) + \mathbf{w}_{z,t}^\top \boldsymbol\beta_w + \beta_{ev}\, x^{ev}_{z,t} + \boldsymbol\ell_{z,t}^\top \boldsymbol\beta_\ell,
 \end{equation}
 261 zone dummies plus the numeric/harmonic/lag blocks give a $\sim$290-column design matrix, purely additive -- every covariate's effect is a constant percentage shift across zones and times -- which the gradient-boosted benchmark below stress-tests.
-
-\subsection{Overdispersion and Robust Inference}
-
-$\text{Var}(Y) = \mathbb{E}[Y]$ is violated ($\hat\phi \gg 1$): unobserved zone-hour heterogeneity (an unflagged event, a driver shortage) pushes some cells past what a single Poisson rate can absorb, inflating variance beyond the mean. The model is therefore refit \textbf{Negative Binomial (NB)}, $\text{Var}(Y) = \lambda + \alpha\lambda^2$ ($\alpha$ via Cameron--Trivedi regression~\cite{cameron_trivedi_count}; nests Poisson at $\alpha=0$) -- the specification used hereafter. Zone-hours also share unmodelled local conditions over time, so inference uses zone-clustered sandwich SEs.
 
 \subsection{Poisson Thinning and Uncaptured Demand}
 
@@ -418,7 +416,7 @@ The binomial share model (95,525 zone-hours with taxi trips, 253 zones; 8 zero-t
 
 $D_{z,t}$ translates further: multiplying by the zone's average rideshare fare gives \$827{,}773/hr citywide in fares going to rideshare instead of a yellow cab (same ceiling-not-promise caveat as $D_{z,t}$). Since trip data records no cab count per zone, Little's Law ($L=\lambda W$)~\cite{ross_probability_models} estimates taxis \emph{effectively occupied} by each zone's demand -- a bookkeeping identity needing no queueing assumptions -- implying 1{,}342 taxis in service citywide on average (occupied-with-a-fare only; the true active fleet is larger).
 
-Ranked by uncaptured demand alone, the top zones are almost entirely Brooklyn (Crown Heights North, Bushwick, Williamsburg) -- but these sit at 1--3\% taxi capture, so high uncaptured demand there more likely reflects an unwinnable market than genuine under-supply. Restricting to zones with a real foothold ($\geq10\%$ capture) gives Table~\ref{tab:uncaptured_demand}: LaGuardia, JFK, East Village, Times Sq/Theatre District and Midtown Center are the largest contestable opportunities. Scaling the citywide opportunity by an assumed switchable fraction $s$ gives \$82{,}772/\$165{,}543/\$248{,}315/hr at $s=10/20/30\%$.
+Ranked by uncaptured demand alone, the top zones are almost entirely Brooklyn (Crown Heights North, Bushwick, Williamsburg) -- but these sit at 1--3\% taxi capture, so high uncaptured demand there more likely reflects an unwinnable market than genuine under-supply. Restricting to a real foothold ($\geq10\%$ capture) gives Table~\ref{tab:uncaptured_demand}: LaGuardia, JFK, East Village, Times Sq/Theatre District and Midtown Center are the largest contestable opportunities, scaling to \$82{,}772/\$165{,}543/\$248{,}315/hr at a switchable fraction $s=10/20/30\%$.
 
 \begin{table}[htbp]
 \centering
@@ -447,15 +445,8 @@ Several caveats apply across every result and recommendation in this report, sta
 than hedging each number individually:
 
 \begin{itemize}
-\item \textbf{Every dollar figure is a hypothetical ceiling, not a promised return.} \$827{,}773/hr
-assumes every uncaptured trip converts to a taxi fare -- unrealistic, since some riders are app-native
-and unreachable by a street hail regardless of availability. Realistic capture is reported as scenarios
-(\$82{,}772/\$165{,}543/\$248{,}315/hr at $10/20/30\%$) rather than a single number, and
-Recommendation~\ref{rec:reallocate}'s reallocation estimate should be read the same way.
-\item \textbf{This is a prioritisation tool, not a dispatch system.} The NB demand model carries
-roughly 17--20\% relative error in Manhattan (Section~\ref{sec:results}) -- enough to rank zone-hours
-by opportunity, not to drive minute-by-minute dispatch. Neither model can say \emph{why} a zone
-under-performs (price, wait time, habit, local competition).
+\item \textbf{Every dollar figure is a hypothetical ceiling, not a promised return.} \$827{,}773/hr assumes every uncaptured trip converts to a taxi fare -- unrealistic, since some riders are app-native and unreachable regardless of availability. Realistic capture is reported as scenarios (\$82{,}772/\$165{,}543/\$248{,}315/hr at $10/20/30\%$), and Recommendation~\ref{rec:reallocate} should be read the same way.
+\item \textbf{This is a prioritisation tool, not a dispatch system.} The NB model carries roughly 17--20\% relative error in Manhattan (Section~\ref{sec:results}) -- enough to rank zone-hours, not drive minute-by-minute dispatch. Neither model says \emph{why} a zone under-performs (price, wait time, habit, competition).
 \item \textbf{No model here observes where cabs currently idle or circulate.} The TLC records contain
 no fleet-location data, so \texttt{effective\_taxis} (Little's Law) is a bookkeeping estimate of
 fleet-time occupied \emph{with a fare}, not a measured cab count -- and cannot, by construction, say
@@ -467,7 +458,7 @@ how capture probability would respond to more cabs being physically sent somewhe
 \label{sec:recommendations}
 
 \begin{enumerate}
-\item \label{rec:reallocate} \textbf{Prioritise dispatch/positioning toward LaGuardia, JFK and the under-served Manhattan zones in Table~\ref{tab:uncaptured_demand}, not Brooklyn.} Ranked by uncaptured demand alone, the largest gaps are almost entirely Brooklyn (Crown Heights North, Bushwick, Williamsburg) -- but taxi holds only 1--3\% of trips there against an already-dominant market: unwinnable, not under-supplied. Restricting to zones taxi can realistically contest ($\geq10\%$ capture) instead points to the two airports and East Village/Times Square/Midtown Center -- real existing presence plus hundreds of uncaptured trips/hour each, a far more defensible target list than a blanket expansion.
+\item \label{rec:reallocate} \textbf{Prioritise dispatch/positioning toward LaGuardia, JFK and the under-served Manhattan zones in Table~\ref{tab:uncaptured_demand}, not Brooklyn.} Ranked by uncaptured demand alone, the largest gaps are almost entirely Brooklyn (Crown Heights North, Bushwick, Williamsburg) -- but taxi holds only 1--3\% of trips there against an already-dominant market: unwinnable, not under-supplied. Restricting to zones taxi can realistically contest ($\geq10\%$ capture) instead points to the two airports and East Village/Times Square/Midtown Center -- real presence plus hundreds of uncaptured trips/hour each.
 
 \item \textbf{Concentrate driver incentives on the specific hours taxi already loses, not general demand peaks.} Taxi's share of total demand moves out of phase with demand itself: it peaks at $21.9\%$ Tuesday evening and collapses to $4.2\%$ in the same day's small hours (Figure~\ref{fig:typical_week}), and falls below its seasonal-window average on every major holiday (Table~\ref{tab:holidays}), most sharply at Christmas ($11.3\%$ vs.\ $13.7\%$) -- exactly when rideshare's more elastic supply fills the gap. Shift bonuses timed to these windows are cheaper and faster to deploy than Recommendation 1, and can be trialled alongside it.
 
