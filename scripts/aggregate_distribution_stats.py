@@ -94,7 +94,7 @@ from pyspark.sql.types import DateType
 
 import pandas as pd
 
-from tlc_trips import load_clean_trips, load_zones
+from tlc_trips import load_clean_trips, load_major_events, load_zones
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data" / "tlc_data"
@@ -109,15 +109,7 @@ AIRPORT_IDS = {132: "JFK", 138: "LGA"}
 # 1. Build the (date, borough) event-day set from the events dataset (pandas
 #    - it's a flat CSV, easier to parse dates here than in Spark SQL).
 # ---------------------------------------------------------------------------
-DATETIME_FMT = "%m/%d/%Y %I:%M:%S %p"
-MAJOR_EVENT_TYPES = ["Parade", "Athletic Race / Tour"]  # see note above on why
-
-events = pd.read_csv(ROOT / "data" / "export.csv", low_memory=False)
-events["start"] = pd.to_datetime(events["Start Date/Time"], format=DATETIME_FMT, errors="coerce")
-events["end"] = pd.to_datetime(events["End Date/Time"], format=DATETIME_FMT, errors="coerce")
-events = events.dropna(subset=["start"])
-events = events[events["start"].dt.year == YEAR]
-events = events[events["Event Type"].isin(MAJOR_EVENT_TYPES)]
+events = load_major_events(ROOT, YEAR)
 
 MAX_EVENT_SPAN_DAYS = 14  # guard against bad data producing huge date ranges
 

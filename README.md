@@ -13,7 +13,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-PySpark requires a local JVM (Java 11+). TLC trip records are not commited (see `.gitignore`). Run the downlaods scripts below first:
+PySpark requires a local JVM (Java 11+). TLC trip records are not commited (see `.gitignore`). Run the downloads scripts below first:
 
 
 ## Repo Structure
@@ -22,7 +22,7 @@ PySpark requires a local JVM (Java 11+). TLC trip records are not commited (see 
 
 /data/processed     -- derived .csv and .parquet files used by the notebooks for modelling and analysis
 
-/models     -- .gitignored (recreated by demand_model.ipynb to save model weights once training is complete)
+/models     -- fitted model weights (.pkl/.joblib), committed so demand_model.ipynb can be read without refitting
 
 /notebooks      -- containing all analysis/ modelling notebooks
 
@@ -36,7 +36,9 @@ PySpark requires a local JVM (Java 11+). TLC trip records are not commited (see 
 
 ## Quick Start
 
-Downloading datasets
+### Downloading datasets
+
+Below are examples of using `downloads.py`, graders are recommended to use the first example to download only external datasets. 
 
 ```bash
 # For downloading external datasets only
@@ -48,5 +50,27 @@ python3 scripts/downloads.py --dataset all
 # Or for individual datasets...
 python3 scripts/downloads.py --dataset yellow green events
 
-# Choices: yellow, green, fhvhv, monthly-trip-counts, weather, events
+# Choices: yellow, green, fhvhv, monthly-trip-counts, weather, events, taxi-zones
 ```
+
+### Pre-processing
+
+Pre-processing is handled by various python files, processed data is sent to `data/processed`, later utilised by the notebooks for analysis/ modelling. Run these after the downloads above -- `process_weather.py` needs `intraday_15min_by_date_mode_2025.csv`, so it must come after the aggregation scripts.
+
+```bash
+# Distributions/outliers (general_stats.ipynb) + daily/intraday/event/airport
+# summaries (timeseries_and_summaries.ipynb) -- one pass over the raw trips
+python3 scripts/aggregate_distribution_stats.py
+
+# Per-zone pickup counts by mode (market_share_maps.ipynb)
+python3 scripts/aggregate_zone_counts.py
+
+# Hourly + daily weather joined with trip volume (timeseries_and_summaries.ipynb)
+# -- run after aggregate_distribution_stats.py above (needs its intraday output)
+python3 scripts/process_weather.py
+
+# To build the design matrix (demand_model.ipynb)
+python3 scripts/generate_design_matrix.py
+```
+
+

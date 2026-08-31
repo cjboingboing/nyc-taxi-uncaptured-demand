@@ -193,7 +193,8 @@ A separate outlier analysis (\texttt{notebooks/general\_stats.ipynb}) examined t
 
 \subsection{Long-Run Context: 2009--2025}
 
-\begin{wrapfigure}{l}{0.6\textwidth}
+\needspace{4\baselineskip}
+\begin{wrapfigure}{l}{0.42\textwidth}
     \centering
     \includegraphics[width=0.98\linewidth]{../plots/longrun_trips_timeseries_2009_2025.png}
     \caption{\label{fig:longrun}NYC taxi vs.\ rideshare trips per day, 2009--2025 (thin: monthly; bold: annual average).}
@@ -445,7 +446,7 @@ Several caveats apply across every result and recommendation in this report, sta
 than hedging each number individually:
 
 \begin{itemize}
-\item \textbf{Every dollar figure is a hypothetical ceiling, not a promised return.} \$827{,}773/hr assumes every uncaptured trip converts to a taxi fare -- unrealistic, since some riders are app-native and unreachable regardless of availability. Realistic capture is reported as scenarios (\$82{,}772/\$165{,}543/\$248{,}315/hr at $10/20/30\%$), and Recommendation~\ref{rec:reallocate} should be read the same way.
+\item \textbf{Every dollar figure is a ceiling, not a promised return.} \$827{,}773/hr assumes every uncaptured trip converts to a fare -- unrealistic, since some riders are app-native and unreachable regardless of availability. Realistic capture is scenario-based (\$82{,}772/\$165{,}543/\$248{,}315/hr at $10/20/30\%$), and Recommendation~\ref{rec:reallocate} reads the same way.
 \item \textbf{This is a prioritisation tool, not a dispatch system.} The NB model carries roughly 17--20\% relative error in Manhattan (Section~\ref{sec:results}) -- enough to rank zone-hours, not drive minute-by-minute dispatch. Neither model says \emph{why} a zone under-performs (price, wait time, habit, competition).
 \item \textbf{No model here observes where cabs currently idle or circulate.} The TLC records contain
 no fleet-location data, so \texttt{effective\_taxis} (Little's Law) is a bookkeeping estimate of
@@ -462,7 +463,7 @@ how capture probability would respond to more cabs being physically sent somewhe
 
 \item \textbf{Concentrate driver incentives on the specific hours taxi already loses, not general demand peaks.} Taxi's share of total demand moves out of phase with demand itself: it peaks at $21.9\%$ Tuesday evening and collapses to $4.2\%$ in the same day's small hours (Figure~\ref{fig:typical_week}), and falls below its seasonal-window average on every major holiday (Table~\ref{tab:holidays}), most sharply at Christmas ($11.3\%$ vs.\ $13.7\%$) -- exactly when rideshare's more elastic supply fills the gap. Shift bonuses timed to these windows are cheaper and faster to deploy than Recommendation 1, and can be trialled alongside it.
 
-\item \textbf{Do not tie dispatch incentives to weather forecasts.} Bad weather reliably grows total demand -- every mode gains from rain, yellow taxi proportionally most (Table~\ref{tab:rain_effect}) -- but the binomial capture model finds no significant effect of rain, snow or thunderstorm on taxi's \emph{share} of that demand (all $p>0.17$); only temperature shifts the split (odds ratio $1.0033/^\circ$C). A rain-triggered dispatch push would grow a market taxi and rideshare already share proportionally -- Recommendations 1 and 2 above are what actually move that split.
+\item \textbf{Do not tie dispatch incentives to weather forecasts.} Bad weather reliably grows total demand -- every mode gains from rain, yellow taxi proportionally most (Table~\ref{tab:rain_effect}) -- but the binomial capture model finds no significant effect of rain, snow or thunderstorm on taxi's \emph{share} (all $p>0.17$); only temperature shifts the split (odds ratio $1.0033/^\circ$C). A rain push would grow a market taxi and rideshare already share proportionally -- Recommendations 1 and 2 are what actually move that split.
 \end{enumerate}
 
 \FloatBarrier

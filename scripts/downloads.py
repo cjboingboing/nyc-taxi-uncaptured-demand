@@ -5,15 +5,16 @@ already sitting in this repo (all of them -- data/ is gitignored, see
 
 Graders reproducing the analysis already have the TLC trip parquet
 (course-provided), so the option that actually matters here is `external`
--- 2025 weather, 2025 NYC permitted events, and the long-run monthly trip
-counts, the small supplementary files the notebooks need that nothing else
-provides. The TLC options (yellow/green/fhvhv) and `all` exist for
-completeness / rebuilding this repo's data/ from scratch.
+-- 2025 weather, 2025 NYC permitted events, the long-run monthly trip
+counts, and the zone lookup/shapefile: small supplementary files the
+notebooks need that nothing else provides. The TLC options
+(yellow/green/fhvhv) and `all` exist for completeness / rebuilding this
+repo's data/ from scratch.
 
 Usage:
     python downloads.py                          # interactive menu
     python downloads.py --dataset events weather  # non-interactive
-    python downloads.py --dataset external         # weather + events + monthly-trip-counts
+    python downloads.py --dataset external         # weather + events + monthly-trip-counts + taxi-zones
     python downloads.py --dataset all               # everything below
 
 DATASET -> OUTPUT
@@ -26,6 +27,10 @@ DATASET -> OUTPUT
     events                 2025 NYC permitted events            -> data/export.csv
     monthly-trip-counts    long-run (2009-2025) monthly trip
                            counts by mode                       -> data/processed/monthly_trip_counts_2009_2025.csv
+    taxi-zones             zone LocationID lookup + shapefile   -> data/taxi_zones/taxi+_zone_lookup.csv
+                           (required by tlc_trips.load_zones,       data/taxi_zones/taxi_zones.{shp,shx,dbf,prj,...}
+                           so nearly every script, and directly
+                           by market_share_maps.ipynb)
 
 All filenames/schemas match exactly what scripts/tlc_trips.py,
 scripts/aggregate_distribution_stats.py, scripts/generate_design_matrix.py,
@@ -39,6 +44,7 @@ import io
 import json
 import sys
 import time
+import zipfile
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -294,6 +300,33 @@ def download_monthly_trip_counts() -> None:
     print(f"  Wrote {len(combined)} rows to {out_path}")
 
 
+TLC_MISC = "https://d37ci6vzurychx.cloudfront.net/misc"
+
+
+def download_taxi_zones() -> None:
+    """Zone LocationID lookup CSV + shapefile bundle -- required by
+    tlc_trips.load_zones (so, transitively, almost every script) and by
+    notebooks/market_share_maps.ipynb's geopandas choropleths directly."""
+    print("Downloading taxi zone lookup + shapefile...")
+    zones_dir = ROOT / "data" / "taxi_zones"
+    zones_dir.mkdir(parents=True, exist_ok=True)
+
+    csv_bytes, _ = _fetch_bytes(f"{TLC_MISC}/taxi+_zone_lookup.csv")
+    (zones_dir / "taxi+_zone_lookup.csv").write_bytes(csv_bytes)
+    print(f"  Wrote {zones_dir / 'taxi+_zone_lookup.csv'}")
+
+    # The zip has its own internal "taxi_zones/" folder -- extract flattened
+    # (by basename) so files land directly in zones_dir, not zones_dir/taxi_zones/.
+    zip_bytes, _ = _fetch_bytes(f"{TLC_MISC}/taxi_zones.zip")
+    with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+        for member in zf.infolist():
+            if member.is_dir():
+                continue
+            name = Path(member.filename).name
+            (zones_dir / name).write_bytes(zf.read(member))
+    print(f"  Extracted shapefile bundle to {zones_dir}")
+
+
 DATASETS = {
     "yellow": ("2025 yellow taxi trips (parquet, ~49M rows/yr)", download_yellow),
     "green": ("2025 green taxi trips (parquet, ~0.6M rows/yr)", download_green),
@@ -301,13 +334,14 @@ DATASETS = {
     "weather": ("2025 weather -- Central Park daily + LGA hourly", download_weather),
     "events": ("2025 NYC permitted events", download_events),
     "monthly-trip-counts": ("Long-run (2009-2025) monthly trip counts by mode", download_monthly_trip_counts),
+    "taxi-zones": ("Zone lookup CSV + shapefile (required by almost everything)", download_taxi_zones),
 }
 
 # "external" = everything a grader needs beyond the TLC trip parquet they
-# already have -- weather, events, and the long-run monthly counts are all
-# small supplementary files nothing else provides.
+# already have -- weather, events, the long-run monthly counts, and the zone
+# lookup/shapefile are all small supplementary files nothing else provides.
 BUNDLES = {
-    "external": ["weather", "events", "monthly-trip-counts"],
+    "external": ["weather", "events", "monthly-trip-counts", "taxi-zones"],
     "all": list(DATASETS),
 }
 
@@ -329,7 +363,7 @@ def prompt_menu() -> list[str]:
     print("What would you like to download?\n")
     for i, key in enumerate(keys, 1):
         print(f"  {i}. {key:22s} {DATASETS[key][0]}")
-    print(f"  {len(keys) + 1}. {'external':22s} weather + events + monthly-trip-counts "
+    print(f"  {len(keys) + 1}. {'external':22s} weather + events + monthly-trip-counts + taxi-zones "
           f"(what graders need most -- you already have the TLC trip parquet)")
     print(f"  {len(keys) + 2}. {'all':22s} everything above\n")
 
