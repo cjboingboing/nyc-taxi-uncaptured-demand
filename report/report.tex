@@ -65,19 +65,19 @@ and dispatch planners}: the decision-makers positioned to act on a zone-level re
 the fleet. Modelling discovers how much certain factors affect uncaptured demand and simulates configurations of those factors to estimate the resulting
 shift in demand.
 
-2025 is used as the modelling year throughout: the most recent complete year of data, chosen over the COVID-distorted 2020--2022 window for a realistic
-picture of the market as it stands today, with the same pipeline directly extensible to 2026 as a future exercise once that year's data is released. The
-TLC Trip Records dataset~\cite{tlc_trip_data} forms the backbone for the analysis that follows; several other datasets were used to account for confounding variables.
+2025 is used as the modelling year throughout: the most recent complete year of data, chosen over the COVID-distorted window for a realistic
+picture of the market as it stands today. The TLC Trip Records dataset~\cite{tlc_trip_data} forms the backbone for the analysis that follows; 
+several other datasets were used to account for confounding variables.
 
 
 \subsection{Datasets}
 The TLC trip records dataset is rich with trip information covering every New York City yellow cab (Manhattan areas),
-green taxi (outer boroughs) and HVFHV (high volume for-hire vehicle -- rideshare services such as Uber and Lyft) trip. The dataset also contains a service class
+green taxi (outer boroughs) and HVFHV (high volume for-hire vehicle rideshare services such as Uber and Lyft) trip. The dataset also contains a service class
 called FHV, which covers luxury courier services such as limousines and private charters; these are considered
 a different market to yellow/green cab and rideshare competitors and are therefore not analysed.
 
-To supplement the backbone, various other datasets were gathered to form a better basis for explaining why the gap in
-the ride-hailing market is so stark. These datasets include:
+To supplement the backbone, various other datasets were gathered to form a stronger basis for explaining the stark gap in
+the ride-hailing market. These datasets include:
 
 \begin{enumerate}
     \item \textbf{National Centers for Environmental Information (NCEI) Hourly Weather Report}~\cite{ncei_lcd} --
@@ -194,7 +194,7 @@ A separate outlier analysis (\texttt{notebooks/general\_stats.ipynb}) examined t
 \subsection{Long-Run Context: 2009--2025}
 
 \needspace{4\baselineskip}
-\begin{wrapfigure}{l}{0.42\textwidth}
+\begin{wrapfigure}{l}{0.35\textwidth}
     \centering
     \includegraphics[width=0.98\linewidth]{../plots/longrun_trips_timeseries_2009_2025.png}
     \caption{\label{fig:longrun}NYC taxi vs.\ rideshare trips per day, 2009--2025 (thin: monthly; bold: annual average).}
@@ -224,9 +224,9 @@ New Year's Eve (Dec 31) & 838{,}288 (+28.1\%)   & 11.6\% (12.8\%) \\
 \label{tab:holidays}
 \end{table}
 
-Across all major holidays, taxis see a decline in trips served per zone while rideshare absorbs the difference -- taxi drivers are
+Across all major holidays, taxis see a decline in trips served per zone while rideshare absorbs the difference. Taxi drivers are
 typically full-time employees who take holidays off, whereas rideshare supply is more elastic (Table~\ref{tab:holidays}). New Year's
-Eve is the one holiday where total volume rises sharply rather than falling, yet taxi's share still drops below its window average --
+Eve is the one holiday where total volume rises sharply rather than falling, yet taxi's share still drops below its window average,
 evidence that it is rideshare's more elastic supply, not simply lower demand, driving the pattern on every holiday.
 
 \begin{figure}[htbp]
@@ -236,11 +236,11 @@ evidence that it is rideshare's more elastic supply, not simply lower demand, dr
     \label{fig:typical_week}
 \end{figure}
 
-Trip volume swings by almost two orders of magnitude across a typical week (Figure~\ref{fig:typical_week}) -- from a Tuesday
-pre-dawn trough (58 avg.\ yellow-taxi trips) to a Saturday-night peak (2{,}182) -- while taxi's own market share moves on a different,
+Trip volume swings by almost two orders of magnitude across a typical week (Figure~\ref{fig:typical_week}), from a Tuesday
+pre-dawn trough (58 avg.\ yellow-taxi trips) to a Saturday-night peak (2{,}182), whilst taxi's own \textit{market share} moves on a different,
 out-of-phase clock, peaking Tuesday evening (21.9\%) and troughing in the Tuesday small hours (4.2\%). Total demand and taxi's
-relative competitiveness therefore follow distinct rhythms within the week, motivating the harmonic features of
-Section~\ref{sec:harmonics} rather than a single seasonal dummy.
+relative competitiveness therefore follow a distinct \textbf{cyclical patter} within the week, motivating the harmonic features of
+Section~\ref{sec:harmonics}.
 
 \subsection{Weather Effects}
 
@@ -283,8 +283,8 @@ Lyft   & 7{,}269  & 7{,}805  & +7.4\% \\
 \label{tab:weather}
 \end{table}
 
-Analysis of different weather scenarios shows Uber is the only mode with a significant temperature effect -- hot days reduce its
-demand -- while every mode gains from rain, yellow taxi proportionally most at $+8.5\%$ (Table~\ref{tab:weather_r}, Table~\ref{tab:rain_effect}).
+Analysis of different weather scenarios shows Uber is the only mode with a significant temperature effect, hot days reduce only its
+demand. Rain lifts all modes demand, yellow taxi proportionally most at $+8.5\%$ (Table~\ref{tab:weather_r}, Table~\ref{tab:rain_effect}).
 
 \subsection{Zone-Level Market Share}
 
@@ -305,9 +305,9 @@ demand -- while every mode gains from rain, yellow taxi proportionally most at $
 \label{fig:zone_maps}
 \end{figure}
 
-At the airports, yellow taxi trips run longer than the cross-service average (JFK: avg.\ 14.1mi/40.8min/\$82.6, +11--20\% dist./dur.\ vs.\ other modes; LaGuardia similar, avg.\ 9.5mi/27.9min/\$66.4) while holding only 6.5--7.4\% of trips at either airport -- Uber alone takes 66--70\%. Green cab's airport share is under 0.2\% at both, too thin to draw conclusions from its otherwise large swings in the underlying data.
+At the airports, yellow taxi trips run longer than the cross-service average (JFK: avg.\ 14.1mi/40.8min/\$82.6, +11--20\% dist./dur.\ vs.\ other modes; LaGuardia similar, avg.\ 9.5mi/27.9min/\$66.4) while holding only 6.5--7.4\% of trips at either airport. Uber alone takes 66--70\%. Green cab's airport share is under 0.2\% at both, too thin to draw conclusions from its otherwise large swings in the underlying data.
 
-Figure~\ref{fig:zone_maps} makes the same split spatial: taxi's demand and share are both concentrated in Manhattan, with Brooklyn/Queens/Bronx zones showing high total volume but near-total rideshare dominance -- consistent with the reallocation analysis in Section~\ref{sec:results}, where several high-\emph{demand} Brooklyn zones sit at just 1--3\% taxi capture, a market effectively already lost rather than merely under-served. This geographic split, not a uniform citywide gap, is why the recommendations in Section~\ref{sec:recommendations} target specific Manhattan zones rather than a blanket fleet expansion.
+Figure~\ref{fig:zone_maps} makes the same split spatial: taxi's demand and share are both concentrated in Manhattan, with Brooklyn/Queens/Bronx zones showing high total volume but near-total rideshare dominance. This geographic split, not a uniform citywide gap, is why the recommendations in Section~\ref{sec:recommendations} target specific Manhattan zones rather than a blanket fleet expansion.
 
 \FloatBarrier
 \section{Modelling}
@@ -447,7 +447,7 @@ than hedging each number individually:
 
 \begin{itemize}
 \item \textbf{Every dollar figure is a ceiling, not a promised return.} \$827{,}773/hr assumes every uncaptured trip converts to a fare -- unrealistic, since some riders are app-native and unreachable regardless of availability. Realistic capture is scenario-based (\$82{,}772/\$165{,}543/\$248{,}315/hr at $10/20/30\%$), and Recommendation~\ref{rec:reallocate} reads the same way.
-\item \textbf{This is a prioritisation tool, not a dispatch system.} The NB model carries roughly 17--20\% relative error in Manhattan (Section~\ref{sec:results}) -- enough to rank zone-hours, not drive minute-by-minute dispatch. Neither model says \emph{why} a zone under-performs (price, wait time, habit, competition).
+\item \textbf{This is a prioritisation tool, not a dispatch system.} The NB model carries roughly 17--20\% relative error in Manhattan (Section~\ref{sec:results}), enough to rank zone-hours, not drive minute-by-minute dispatch. Neither model says \emph{why} a zone under-performs (price, wait time, habit, competition).
 \item \textbf{No model here observes where cabs currently idle or circulate.} The TLC records contain
 no fleet-location data, so \texttt{effective\_taxis} (Little's Law) is a bookkeeping estimate of
 fleet-time occupied \emph{with a fare}, not a measured cab count -- and cannot, by construction, say
